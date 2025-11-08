@@ -1,0 +1,12 @@
+import express from "express"
+import { getUserProfile, followUnfollowUser, getSuggestedUsers, updateUserProfile } from "../controllers/users.controllers.js"
+import { protectRoute } from "../middleware/protectRoute.js"
+
+const router = express.Router()
+
+router.get("/profile/:username", protectRoute, getUserProfile)
+router.post("/follow/:id", protectRoute, followUnfollowUser)
+router.get("/suggested", protectRoute, getSuggestedUsers)
+router.post("/update", protectRoute, updateUserProfile)
+
+export default router

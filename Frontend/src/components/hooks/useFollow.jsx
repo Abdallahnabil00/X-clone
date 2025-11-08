@@ -1,0 +1,31 @@
+import {useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+
+
+const useFollow = () => {
+    const QueryClient = useQueryClient();
+    const {mutate: follow, isPending} = useMutation({
+        mutationFn: async (userId) => {
+            try {
+                const res = await fetch(`/api/user/follow/${userId}`, {
+                    method: 'POST'
+                })
+                const data = await res.json();
+                if(!res.ok) throw new Error(data.error || "Something went wrong")
+                return data;
+
+            }catch (error) {
+                throw new Error(error.message || "Something went wrong")
+            }
+        },
+        onSuccess: () => {
+            QueryClient.invalidateQueries({queryKey: ['authUser']})
+            QueryClient.invalidateQueries({queryKey: ["suggestedUsers"]})
+        },
+        onError:(error) => {toast.error(error.message || "Something went wrong")}
+    })
+
+    return {follow, isPending}
+}
+
+export default useFollow;
